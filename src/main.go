@@ -26,9 +26,9 @@ func main() {
 		go checkLink(link, c)
 	}
 
-	for {
+	for l := range c {
 		// recieve from the channel
-		go checkLink(<-c, c)
+		go checkLink(l, c)
 	}
 
 	duration := time.Since(start)

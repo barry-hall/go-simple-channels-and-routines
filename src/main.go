@@ -26,8 +26,10 @@ func main() {
 		go checkLink(link, c)
 	}
 
-	// recieve from the channel
-	fmt.Println(<-c)
+	for {
+		// recieve from the channel
+		go checkLink(<-c, c)
+	}
 
 	duration := time.Since(start)
 	roundedDuration := Round(duration.Seconds(), 2)
@@ -40,13 +42,13 @@ func checkLink(link string, c chan string) {
 	if err != nil {
 		fmt.Println(link, "might be down!")
 		// send to the channel
-		c <- "Might be down I think"
+		c <- link
 		return
 	}
 
 	fmt.Println(link, "is up!")
 	// send to the channel
-	c <- "Yep its up"
+	c <- link
 }
 
 func Round(num float64, decimalPlaces int) float64 {

@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"math"
 	"net/http"
 	"time"
 )
@@ -16,8 +15,6 @@ func main() {
 		"http://amazon.com",
 	}
 
-	start := time.Now()
-
 	c := make(chan string)
 
 	for _, link := range links {
@@ -25,13 +22,12 @@ func main() {
 	}
 
 	for l := range c {
-		time.Sleep(5 * time.Second)
-		go checkLink(l, c)
+		go func(link string) {
+			time.Sleep(5 * time.Second)
+			checkLink(link, c)
+		}(l)
 	}
 
-	duration := time.Since(start)
-	roundedDuration := Round(duration.Seconds(), 2)
-	fmt.Printf("Time taken: %.2f seconds\n", roundedDuration)
 }
 
 func checkLink(link string, c chan string) {
@@ -44,9 +40,4 @@ func checkLink(link string, c chan string) {
 
 	fmt.Println(link, "is up!")
 	c <- link
-}
-
-func Round(num float64, decimalPlaces int) float64 {
-	pow := math.Pow10(decimalPlaces)
-	return math.Round(num*pow) / pow
 }
